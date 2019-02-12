@@ -1,11 +1,11 @@
-## WAT: An introduction to PLT
+# WAT: An introduction to PLT
 - https://www.destroyallsoftware.com/talks/wat
 - PLT, or Programming Language Theory, is the study of everything wrong with
   what you just saw.
   - This workshop will cover the fundamentals of PLT
   - By the end, you will be equipped to build your own language!
 
-## The phases of compilation
+# The phases of compilation
 - We'll be writing an interpreter. What does that entail?
 - You need to read a source program, and manipulate it to produce output.
 - Phases: scan, parse, typecheck, evaluate
@@ -18,7 +18,7 @@
       errors
     - Evaluate: traverse a syntax tree and produce an output
 
-## Scanning
+# Scanning
 - Scanning is the "dumb" phase. Not much interesting happens here - the idea is
   to "normalize" the input into something that's nice to operate on.
 - But what do we even scan? PLs begin with **concrete syntax**.
@@ -30,7 +30,7 @@
   something we can operate on programmatically
     - SML makes this easy: define `datatype token`
 
-## Parsing
+# Parsing
 - Here's where interesting things start to happen!
 - So let's suppose we have this program: `(&& (! False) False)`
     - How do we turn this into something we can operate on?
@@ -42,7 +42,7 @@
 - There will be lots of recursion here, as you'll need to find a way to "gobble
   up" `! False` as the first parameter to the `&&`.
 
-## Evaluation
+# Evaluation
 - Goal: take in an abstract syntax tree and produce its output.
 - Consider our example program: writing a fully general function here to
   evaluate recursive structures seems... unwieldy.
@@ -58,7 +58,7 @@
       errors! For example, a segfault in C is a stuck term (memory access that
       can't be executed).
 
-## Typechecking
+# Typechecking
 
 - Goal: eliminate stuck terms
 - We need to first take a detour and talk about typechecking in a vacuum.
@@ -83,7 +83,7 @@
 
 - - - -
 
-## Your language here!
+# Your language here!
 
 - This language is super, super tiny. It has one type, and doesn't even have
   conditional branching.
