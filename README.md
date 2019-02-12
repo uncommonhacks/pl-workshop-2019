@@ -6,7 +6,7 @@
   - By the end, you will be equipped to build your own language!
 
 # A concrete example
-- Consider the program `1 + 2 + 3`.'
+- Consider the program `1 + 2 + 3`.
 - How do we take this from a string input to meaningful output?
   - There are distinct phases of compilation.
 
