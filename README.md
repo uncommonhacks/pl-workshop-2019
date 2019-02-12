@@ -1,5 +1,3 @@
-# PLT Fundamentals
-
 ## The phases of compilation
 - We'll be writing an interpreter. What does that entail?
 - You need to read a source program, and manipulate it to produce output.
