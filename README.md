@@ -1,7 +1,9 @@
 ## WAT: An introduction to PLT
 - https://www.destroyallsoftware.com/talks/wat
-- So PLT, or Programming Language Theory, is the study of everything wrong with
+- PLT, or Programming Language Theory, is the study of everything wrong with
   what you just saw.
+  - This workshop will cover the fundamentals of PLT
+  - By the end, you will be equipped to build your own language!
 
 ## The phases of compilation
 - We'll be writing an interpreter. What does that entail?
