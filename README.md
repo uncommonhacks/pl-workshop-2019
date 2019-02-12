@@ -14,13 +14,13 @@
 - The scanner takes the input and transforms it into representable data.
   - Specifically, it transforms a string into a **token list**.
 - For example, the result of the scanner on our program would be:
-  - [1, Plus, 2, Plus, 3]
+  - `[1, Plus, 2, Plus, 3]`
 - The result of scanning is fed into the parser.
 
 ## Parsing
 - The parser takes the scanner's output and structures it.
   - Specifically, it transforms a token list into an **abstract syntax
-    tree**, or AST.
+    tree**, or **AST**.
 - For example, the result of the parser on the scanner's output from above would
   be:
 
