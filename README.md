@@ -41,32 +41,15 @@
   - `1 + 2 + "hi"` results in a type error
 - How does it accomplish this?
   - By recursively verifying the types of subexpressions.
-  - For example, in our program from above:
-```
- Plus
- /  \
-1  Plus
-   /  \
-  2    3
-```
-
-    - The typechecker begins by seeing `Plus` at the root of the AST. So, it
-      knows that both sides must have type `Int` for the expression to make any
-      sense. To do this, we recursively typecheck both sides of the expression.
+    - For example, in `1 + 2 + 3`: the typechecker begins by seeing
+      `Plus` at the root of the AST. So, it knows that both sides must have type
+      `Int` for the expression to make any sense. To do this, we recursively
+      typecheck both sides of the expression.
   - How about in the case of a type error?
-
-```
- Plus
- /  \
-1  Plus
-   /  \
-  2   "hi"
-```
-
-    - Again, the typechecker begins by deducing that both sides of the
-      expression must have type `Int`. But, when recursively checking the
-      right-hand side, we see that indeed one of the operands to `Plus` isn't an
-      `Int`, which causes a type error.
+    - In `1 + 2 + "hi"`, again, the typechecker begins by deducing that both
+      sides of the expression must have type `Int`. But, when recursively
+      checking the right-hand side, we see that indeed one of the operands to
+      `Plus` isn't an `Int`, which causes a type error.
 
 ## Evaluation
 - The evaluator takes the parser's output and, well, evaluates it.
