@@ -49,10 +49,12 @@
    /  \
   2    3
 ```
+
     - The typechecker begins by seeing `Plus` at the root of the AST. So, it
       knows that both sides must have type `Int` for the expression to make any
       sense. To do this, we recursively typecheck both sides of the expression.
   - How about in the case of a type error?
+
 ```
  Plus
  /  \
@@ -60,6 +62,7 @@
    /  \
   2   "hi"
 ```
+
     - Again, the typechecker begins by deducing that both sides of the
       expression must have type `Int`. But, when recursively checking the
       right-hand side, we see that indeed one of the operands to `Plus` isn't an
