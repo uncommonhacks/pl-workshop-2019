@@ -76,50 +76,94 @@
 ```
 
 
-# The phases of compilation
-- We'll be writing an interpreter. What does that entail?
-- You need to read a source program, and manipulate it to produce output.
-- Phases: scan, parse, typecheck, evaluate
-    - Goals:
-    - Scan: read in source code, character by character, and produce something
-      that can be operated on programmatically - a token list
-    - Parse: take that token list, and produce a syntax tree that formally
-      describes the program
-    - Typecheck: read in a syntax tree and make sure that it doesn't contain
-      errors
-    - Evaluate: traverse a syntax tree and produce an output
+# Time to formalize!
+## Scanning
+- PLs begin with **concrete syntax**, which is defined using Backus-Naur Form,
+  or BNF. Here's an example:
+```
+t ::=
+  | 0, 1, ...
+  | t + t
+  | t * t
+  | true
+  | false
+  | !t
+  | t && t
+  | t || t
+  | (t)
+```
+- Earlier we mentioned that scanning takes a string and produces a token list.
+  So what's a token?
+  - A token is simply a programmatic representation of the components of a BNF
+    term. For example, in Standard ML, we could write the following:
+```
+datatype token =
+    Numeric of int
+  | Plus
+  | Times
+  | True
+  | False
+  | Bang
+  | AndAnd
+  | OrOr
+  | LParen
+  | RParen
+```
+- Now, the scanner will *try* to transform its input into a token list, or fail
+  if you give it input that's not part of the language's concrete syntax. For
+  example, `1 + qoi3egwbs` would be a scan error.
 
-# Scanning
-- Scanning is the "dumb" phase. Not much interesting happens here - the idea is
-  to "normalize" the input into something that's nice to operate on.
-- But what do we even scan? PLs begin with **concrete syntax**.
-- Concrete syntax is defined using Backus-Naur Form, or BNF.
-    - Step through BNF for lispy boolean algebra: `True`, `False`, `&&`, `||`,
-      `!`
-    - Hit on metavariables
-- Scanning simply takes something written in concrete syntax and produces
-  something we can operate on programmatically
-    - SML makes this easy: define `datatype token`
+## Parsing
+- Once we have a token list, we need to produce an AST. Just like with tokens,
+  we need a way to represent ASTs.
+  - In Standard ML, we could write the following:
+```
+datatype term =
+    Numeric of int
+  | Plus of term * term
+  | Times of term * term
+  | True
+  | False
+  | Not of term
+  | And of term * term
+  | Or of term * term
+```
+- Now, the parser will *try* to transform its input into an AST, or fail if you
+  give it valid tokens that don't make sense. For example, `1 (5)` would be a
+  parse error, even though it would scan correctly.
 
-# Parsing
-- Here's where interesting things start to happen!
-- So let's suppose we have this program: `(&& (! False) False)`
-    - How do we turn this into something we can operate on?
-- Goal: produce an **abstract syntax tree**, or AST
-    - Draw out the AST of this program
-    - To understand the difference, note that the parens don't appear in the
-      abstract syntax
-    - SML also makes this easy: define `datatype term`
-- There will be lots of recursion here, as you'll need to find a way to "gobble
-  up" `! False` as the first parameter to the `&&`.
+## Evaluation
+- Once you have an AST, you need a way to evaluate on it. But evaluating
+  recursive structures is complex; so we reduce the problem to *taking steps* on
+  recursive structures.
+  - A small-step evaluation relation is defined by writing rules in *judgment
+    form*. In fact, everything we've covered so far can be written in judgment
+    form, but it's less intuitive for the earlier phases.
+- Here are some judgment form rules:
+```
+--------------
+!false -> true
 
-# Evaluation
-- Goal: take in an abstract syntax tree and produce its output.
-- Consider our example program: writing a fully general function here to
-  evaluate recursive structures seems... unwieldy.
-- So, define a **small-step evaluation relation**.
-    - Write out the judgment form rules for `!`, `&&`
-        - Point out short-circuiting in `&&`
+
+--------------
+!true -> false
+```
+- These two rules mean that without any predicate, `!false` steps to `true` and
+  `!true` steps to `false`.
+  - But this isn't sufficient! If we could only step on the negation of boolean
+    literals, we'd be very limited. We want to be able to do something like
+    `!(!true)` and have it evaluate to `false`.
+  - To do this, we need a more complex rule:
+```
+ t -> t'
+---------
+!t -> !t'
+```
+- This rule means that if it is possible for `t` to step to `t'`, then `!t` can
+  step to `!t'`.
+  - Suppose we're looking at `!(!true)`. Then `t` is `!true`. Since `t` can step
+    to `false` (i.e. `t'` is `false`), then `!(!true)` can step to `!false`.
+
 - Once you have a small-step evaluation function, the evaluation function itself
   is pretty much trivial. You just step until you can step no more.
     - Once you can step no more, you've reached a **normal form**. Certain
@@ -129,19 +173,32 @@
       errors! For example, a segfault in C is a stuck term (memory access that
       can't be executed).
 
-# Typechecking
-
+## Typechecking
 - Goal: eliminate stuck terms
-- We need to first take a detour and talk about typechecking in a vacuum.
+  - We need to first take a detour and talk about typechecking in a vacuum.
 - Goal: assign types to programs.
     - Typechecking rules are defined in judgment form, similar to small-step
-      evaluation rules.
-    - Write out the judgment form rules for typechecking `True`, `False`, `!`,
-      and `&&`.
-- **Type soundness** is the sickest fucking thing on planet earth.
+      evaluation rules. Here are some examples:
+```
+t: Bool
+--------
+!t: Bool
+```
+- This means that if `t` has type `Bool`, then `!t` also has type `Bool`.
+
+```
+t1: Int, t2: Int
+----------------
+  t1 + t2: Int
+```
+- This means that if both `t1` and `t2` have type `Int`, then `t1 + t2` also has
+  type `Int`.
+
+- What do we get from all of this? Why bother?
+  - **Type soundness** is the sickest fucking thing on planet earth.
     - A type soundness theorem is a theorem stated for a specific programming
-      language, evaluation relation, and typechecking rules. A type soundness
-      theorem contains two lemmas:
+      language, evaluation relation, and set of typechecking rules. A type
+      soundness proof contains two lemmas:
         - Progress: if a term can be assigned a type, and that term is not a
           value, then it can take a step somewhere.
         - Preservation: if a term can be assigned a type and there exists a term
@@ -151,6 +208,12 @@
     - This is **wicked fucking lit**. In a formal setting, i.e. a language that
       has a proven type soundness theorem, **any program that passes the
       typechecker is free of runtime errors.**
+      - Now, there's a small asterisk here; we can only prevent a certain class
+        of runtime errors. For example, if you have a program where you add 5
+        when you meant to multiply 5, there's no way the typechecker can catch
+        that.
+      - But on the flipside, this is a *huge* category of errors that we can
+        catch! For example, segfaults would be impossible if C were type-sound.
 
 - - - -
 
