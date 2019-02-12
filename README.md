@@ -5,14 +5,99 @@
   - This workshop will cover the fundamentals of PLT
   - By the end, you will be equipped to build your own language!
 
+# A concrete example
+- Consider the program `1 + 2 + 3`.'
+- How do we take this from a string input to meaningful output?
+  - There are distinct phases of compilation.
+
+## Scanning
+- The scanner takes the input and transforms it into representable data.
+  - Specifically, it transforms a string into a **token list**.
+- For example, the result of the scanner on our program would be:
+  - [1, Plus, 2, Plus, 3]
+- The result of scanning is fed into the parser.
+
+## Parsing
+- The parser takes the scanner's output and structures it.
+  - Specifically, it transforms a token list into an **abstract syntax
+    tree**, or AST.
+- For example, the result of the parser on the scanner's output from above would
+  be:
+
+```
+ Plus
+ /  \
+1  Plus
+   /  \
+  2    3
+```
+
+## Typechecking
+- The typechecker takes the parser's output and makes sure that all the types
+  match up.
+  - Specifically, it transforms an AST into a **type attempt**.
+- This is probably the hardest output type to understand, so here are examples.
+  - `1 + 2 + 3` results in `Int`
+  - `1 + 2 + "hi"` results in a type error
+- How does it accomplish this?
+  - By recursively verifying the types of subexpressions.
+  - For example, in our program from above:
+```
+ Plus
+ /  \
+1  Plus
+   /  \
+  2    3
+```
+    - The typechecker begins by seeing `Plus` at the root of the AST. So, it
+      knows that both sides must have type `Int` for the expression to make any
+      sense. To do this, we recursively typecheck both sides of the expression.
+  - How about in the case of a type error?
+```
+ Plus
+ /  \
+1  Plus
+   /  \
+  2   "hi"
+```
+    - Again, the typechecker begins by deducing that both sides of the
+      expression must have type `Int`. But, when recursively checking the
+      right-hand side, we see that indeed one of the operands to `Plus` isn't an
+      `Int`, which causes a type error.
+
+## Evaluation
+- The evaluator takes the parser's output and, well, evaluates it.
+  - Specifically, and perhaps surprisingly, it transforms an AST into **another
+    AST**.
+- How does it do this?
+  - By taking steps. When it's not possible to take a step, you're done.
+- For example, the steps that the evaluator would take on the AST from above
+  would be:
+```
+ Plus
+ /  \
+1  Plus
+   /  \
+  2    3
+```
+```
+ Plus
+ /  \
+1    5
+```
+```
+6
+```
+
+
 # The phases of compilation
 - We'll be writing an interpreter. What does that entail?
 - You need to read a source program, and manipulate it to produce output.
 - Phases: scan, parse, typecheck, evaluate
     - Goals:
     - Scan: read in source code, character by character, and produce something
-      that can be operated on programmatically - a list of tokens
-    - Parse: take that list of tokens, and produce a syntax tree that formally
+      that can be operated on programmatically - a token list
+    - Parse: take that token list, and produce a syntax tree that formally
       describes the program
     - Typecheck: read in a syntax tree and make sure that it doesn't contain
       errors
