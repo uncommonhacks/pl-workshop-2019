@@ -217,19 +217,5 @@ t1: Int, t2: Int
 
 - - - -
 
-# Your language here!
-
-- This language is super, super tiny. It has one type, and doesn't even have
-  conditional branching.
-- I recommend your language include at minimum:
-    - Boolean constants and unary/binary operators (so, the example language
-      we've been using)
-    - A conditional (an if statement)
-    - A system of numbers! Peano arithmetic (i.e. `Zero`, `Succ`, and `Pred`) is
-      a good choice. This makes determining whether or not something is a value
-      nontrivial!
-- If you end up being able to implement all this - and to be clear, I will be
-  shocked if anyone can - I recommend implementing the following:
-    - Tuples
-    - Option types
-    - Lists
+# Time to make your own language!
+https://git.io/fhQHb
